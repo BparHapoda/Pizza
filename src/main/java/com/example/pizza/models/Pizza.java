@@ -2,16 +2,15 @@ package com.example.pizza.models;
 
 import java.util.ArrayList;
 
-enum Receipts {
+enum Receipt {
     MARGARITA,
     FOUR_CHEESE,
     CAPRICHOSA,
     HAWAJI;
 }
-public enum Toppings
-{MEET, HREN}
+
 
 public class Pizza {
-    private String [] receipt;
+    private Receipt receipt;
 
 }

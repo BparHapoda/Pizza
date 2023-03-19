@@ -17,20 +17,22 @@ public class dataSourceInit implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        ServletContext context = sce.getServletContext();
-        Properties properties = new Properties();
+        ServletContext servletContext= sce.getServletContext();
+        Properties properties=new Properties();
         try {
             properties.load(getClass().getClassLoader().getResourceAsStream("application.properties"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        HikariConfig config = new HikariConfig();
-        config.setJdbcUrl(properties.getProperty("db.url"));
-        config.setPassword(properties.getProperty("db.password"));
-        config.setDriverClassName(properties.getProperty("db.driver"));
-        config.setMaximumPoolSize(Integer.parseInt(properties.getProperty("db.pool")));
-        this.dataSource = new HikariDataSource(config);
-        context.setAttribute("db", dataSource);
+        HikariConfig hikariConfig=new HikariConfig();
+        hikariConfig.setUsername(properties.getProperty("db.user"));
+        hikariConfig.setJdbcUrl(properties.getProperty("db.url"));
+        hikariConfig.setPassword(properties.getProperty("db.password"));
+        hikariConfig.setMaximumPoolSize(Integer.parseInt(properties.getProperty("db.pool")));
+        hikariConfig.setDriverClassName(properties.getProperty("db.driver"));
+
+        this.dataSource=new HikariDataSource(hikariConfig);
+        servletContext.setAttribute("db",dataSource);
     }
 
     @Override

@@ -7,6 +7,6 @@ import java.util.Optional;
 
 public interface OrdersRepository {
     void save (Order order);
-    Optional<Order> findByLogin(String login);
+
 
 }

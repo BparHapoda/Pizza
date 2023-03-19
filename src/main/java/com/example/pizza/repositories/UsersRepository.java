@@ -1,5 +1,6 @@
 package com.example.pizza.repositories;
 
+import com.example.pizza.dtos.SignInForm;
 import com.example.pizza.models.Order;
 import com.example.pizza.models.User;
 
@@ -14,5 +15,7 @@ public interface UsersRepository {
     Optional <User> searchByNameSurname(String name,String surname);
 
     List<User> findAll();
+
+    Optional<User> findByLoginAndPassword(String login,String password);
 
 }

@@ -12,9 +12,9 @@ import java.util.ArrayList;
 @NoArgsConstructor
 @Builder
 public class Order {
+    private Long id;
     private String login;
-    private Pizza pizza;
-    private ArrayList<Toppings> toppings;
+    private String pizza;
 
     private String adress;
 
