@@ -18,13 +18,13 @@
         <input type="radio" name="pizza" id="margarita" value="margarita">
             <br>
             <Label for="capr">Капричоза</Label>
-        <input type="radio" name="pizza" id="capr">
+        <input type="radio" name="pizza" id="capr" value="capr">
             <br>
             <Label for="four">Четыре сыра</Label>
-        <input type="radio" name="pizza" id="four">
+        <input type="radio" name="pizza" id="four" value="four">
             <br>
             <Label for="hawaji">Гавайская</Label>
-        <input type="radio" name="pizza" id="hawaji">
+        <input type="radio" name="pizza" id="hawaji" value="hawaji">
             <br><br>
             <Label for="address">Введите адрес доставки : </Label>
         <input type="text" name="address" id="address">
