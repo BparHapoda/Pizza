@@ -113,6 +113,13 @@
     #ingridientsForMyPizza {
         display: none;
     }
+    .map{
+        position: absolute;
+top:0px;
+        font-weight: bold;
+        font-size: 15px;
+        left:500px;
+    }
 </style>
 <body>
 <div class="base">
@@ -185,7 +192,13 @@
 
 
             <input class="lastButton" style="width: 100px;height: 30px" type="submit">
+
         </form>
+
+        <div class="map">
+            Зона доставки :
+            <script type="text/javascript" charset="utf-8" async src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3Ad9cf06abbc130e72d3fbdf345897b9280c31556e705ada781a818656a1f267f7&amp;width=692&amp;height=632&amp;lang=ru_RU&amp;scroll=true"></script>
+        </div>
     </div>
 </div>
 </body>

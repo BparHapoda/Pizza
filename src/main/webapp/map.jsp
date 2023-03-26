@@ -10,21 +10,10 @@
 <head>
   <title>Быстрый старт. Размещение интерактивной карты на странице</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <script src="https://api-maps.yandex.ru/3.0/?apikey=3bbf19ad-7217-4c79-a602-e16546554244&lang=ru_RU"></script>
-  <script>
-    ymaps3.ready.then(init);
-    function init() {
-      const map = new ymaps3.YMap(document.getElementById('map'), {
-        location: {
-          center: [37.64, 55.76],
-          zoom: 7
-        }
-      });
-    }
-  </script>
+  <script type="text/javascript" charset="utf-8" async src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3Ad9cf06abbc130e72d3fbdf345897b9280c31556e705ada781a818656a1f267f7&amp;width=692&amp;height=632&amp;lang=ru_RU&amp;scroll=true"></script>
 </head>
 
 <body>
-<div id="map" style="width: 600px; height: 400px"></div>
+
 </body>
 </html>
