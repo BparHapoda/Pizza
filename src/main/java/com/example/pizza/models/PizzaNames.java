@@ -5,7 +5,8 @@ public enum PizzaNames {
     MARGARITA ("Маргарита"),
     FOUR_CHEESE ("Четыре сыра"),
     CAPRICHOSA ("Капричоза"),
-    HAWAJI("Гавайская");
+    HAWAJI("Гавайская"),
+    MY_PIZZA ("Пицца по собственному рецепту");
 
     private final String title;
 

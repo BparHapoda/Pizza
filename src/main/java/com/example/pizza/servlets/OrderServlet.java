@@ -22,7 +22,9 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,6 +60,7 @@ this.objectMapper=new ObjectMapper();
         Integer id=signInService.getUserIdByLogin(login);
         UserDto userDto=userService.getUserFromRepository(id);
 
+
         Pizza pizza;
         String pizzaName=req.getParameter("pizza");
         switch (pizzaName){
@@ -65,7 +68,16 @@ this.objectMapper=new ObjectMapper();
             case "Четыре сыра" :{pizza= new PizzaCaprichosa();break;}
             case "Капричоза" :{pizza= new PizzaFourCheese();break;}
             case "Гавайская" :{pizza= new PizzaHawaji();break;}
+            case "myPizza" :{
+                pizza= new PizzaMy();
+                for (Ingridient ingridient: Arrays.asList(Ingridient.values())
+                     ) {
 
+if(req.getParameter(ingridient.getTitle())!=null){pizza.getReceipt().add(ingridient);}
+                }
+
+
+                break;}
             default:
                 throw new IllegalStateException("Unexpected value: " + pizzaName);
         }
@@ -75,27 +87,31 @@ this.objectMapper=new ObjectMapper();
                 .clientId(id)
                 .pizza(pizza.getName().getTitle())
                 .login(login)
-                .receipt(objectMapper.writeValueAsString(pizza.getReceipt()))
                 .name(userDto.getName())
                 .surname(userDto.getSurname()).
                 phone(userDto.getPhone()).
                 address(req.getParameter("address"))
                 .email(userDto.getEmail())
                 .build();
-        if(req.getParameter("top").equals("on")){
-            List <Topping>toppings =new ArrayList<>();
-            if(req.getParameter("Сыр")!=null){toppings.add(Topping.CHEESE);}
-            if(req.getParameter("Яйцо")!=null){toppings.add(Topping.EGG);}
-            if(req.getParameter("Ветчина")!=null){toppings.add(Topping.HAM);}
-            if(req.getParameter("Ананас")!=null){toppings.add(Topping.PINE_APPLE);}
-            if(req.getParameter("Рыба")!=null){toppings.add(Topping.FISH);}
-            if(req.getParameter("Острый перец")!=null){toppings.add(Topping.CHILI);}
-            if(req.getParameter("Оливки")!=null){toppings.add(Topping.OLIVES);}
+
+        List <String> stringReceipt =new ArrayList<>();
+        for (Ingridient ingridient:pizza.getReceipt()){stringReceipt.add(ingridient.getTitle());}
+        orderForm.setReceipt(objectMapper.writeValueAsString(stringReceipt));
+
+        List <String>toppings =new ArrayList<>();
+        if(req.getParameter("top")!=null){
+
+            for (Topping topping: Arrays.asList(Topping.values())
+            ) {
+                if(req.getParameter(topping.getTitle())!=null){toppings.add(topping.getTitle());}
+            }
+
             if(toppings.size()>0){
                 orderForm.setToppings(objectMapper.writeValueAsString(toppings));
             }
 
         }
+
 
         orderService.order(orderForm);
         req.getRequestDispatcher("orderDone.jsp").forward(req, resp);

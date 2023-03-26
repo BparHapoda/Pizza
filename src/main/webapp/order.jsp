@@ -12,13 +12,22 @@
 <head>
     <title>Order Page</title>
     <script>
-        function check() {
-            if(document.getElementById('ul1').style.display==='none'){
-          document.getElementById('ul1').style.display="block";}
-            else {
-                document.getElementById('ul1').style.display="none";
+        function viewConstruktor() {
+            if (document.getElementById('myPizza').checked & document.getElementById('ingridientsForMyPizza').style.display === 'none') {
+                document.getElementById('ingridientsForMyPizza').style.display = "block";
+            } else {
+                document.getElementById('ingridientsForMyPizza').style.display = "none";
             }
-return false;
+            return false;
+        }
+
+        function check() {
+            if (document.getElementById('ul1').style.display === 'none') {
+                document.getElementById('ul1').style.display = "block";
+            } else {
+                document.getElementById('ul1').style.display = "none";
+            }
+            return false;
 
         }
     </script>
@@ -57,7 +66,7 @@ return false;
         background: url("/images/pizza1.png");
 
         color: black;
-width: 100%;
+        width: 100%;
         height: 100%;
 
     }
@@ -92,18 +101,25 @@ width: 100%;
 
     .big {
         width: 600px;
-height: 50px;
+        height: 50px;
         font-size: 30px;
         font-weight: bolder;
     }
 
-    .ul1{display: block;}
+    .ul1 {
+        display: block;
+    }
+
+    #ingridientsForMyPizza {
+        display: none;
+    }
 </style>
 <body>
 <div class="base">
     <div><h2> Здравствуйте <%=request.getAttribute("login")%>
-        <%HttpSession httpSession= (HttpSession) request.getSession();
-        httpSession.setAttribute("login",request.getAttribute("login"));
+        <%
+            HttpSession httpSession = (HttpSession) request.getSession();
+            httpSession.setAttribute("login", request.getAttribute("login"));
         %>
 
     </h2></div>
@@ -112,32 +128,56 @@ height: 50px;
 
     <div>
         <form action="order" method="post">
-<ul>
-    <c:forEach items="#{requestScope.pizzas}" var="a">
-        <li><input type="radio" name="pizza" id="${a}" value="${a}">
-            ${a}
-        </li>
+            <ul>
 
-    </c:forEach>
-</ul>
+                <c:forEach items="#{requestScope.pizzas}" begin="0" end="3" var="a">
+                    <li> <input type="radio" name="pizza" id="${a}" value="${a}" onclick="viewConstruktor()">
+                        ${a}
+                            </li>
+
+                    </c:forEach>
+
+
+
+
+
+
+                <li>
+                    <input type="radio" name="pizza" id="myPizza" value="myPizza" onclick="viewConstruktor()">
+                    Пицца по собственному рецепту
+                </li>
+
+                <ul id="ingridientsForMyPizza">
+
+                    <c:forEach items="#{requestScope.ingridients}" var="c">
+                        <li><input type="checkbox" name="${c}" id="${c}" value="${c}">
+                                ${c}
+                        </li>
+
+                    </c:forEach>
+
+                </ul>
+
+
+            </ul>
+
 
             <div class="head">Выбираем добавки ? <input type="checkbox"
                                                         checked="true" id="top" name="top" onchange="check()">
             </div>
-<div  class="ul1" id="ul1">
+            <div class="ul1" id="ul1">
 
-    <ul>
-        <c:forEach items="#{requestScope.toppings}" var="b">
-            <li><input type="checkbox" name="${b}" id="${b}" value="${b}">
-                    ${b}
-            </li>
+                <ul>
+                    <c:forEach items="#{requestScope.toppings}" var="b">
+                        <li><input type="checkbox" name="${b}" id="${b}" value="${b}">
+                                ${b}
+                        </li>
 
-        </c:forEach>
-    </ul>
+                    </c:forEach>
+                </ul>
 
 
-
-</div>
+            </div>
             <br>
 
             <span class="big" for="address">Введите адрес доставки : </span>
