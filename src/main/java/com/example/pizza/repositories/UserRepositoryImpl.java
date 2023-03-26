@@ -1,6 +1,6 @@
 package com.example.pizza.repositories;
 
-import com.example.pizza.dtos.SignInForm;
+import com.example.pizza.dtos.UserDto;
 import com.example.pizza.models.User;
 
 import javax.sql.DataSource;
@@ -10,8 +10,12 @@ import java.util.Optional;
 
 public class UserRepositoryImpl implements UsersRepository {
 
-    private static String INSERT = "INSERT INTO users (name,surname,login,password,nickname) values (?,?,?,?,?)";
+    private static String INSERT = "INSERT INTO users (name,surname,login,password,phone,email) values (?,?,?,?,?,?)";
     private static String SELECT_BY_LOGIN_AND_PASSWORD = "SELECT * FROM users WHERE login=? AND password=?";
+
+    private static String SELECT_BY_LOGIN="SELECT * FROM users WHERE login=?";
+
+    private static String SELECT_BY_ID="SELECT * FROM users WHERE id=?";
     private DataSource dataSource;
 
     public UserRepositoryImpl(DataSource dataSource) {
@@ -27,7 +31,8 @@ public class UserRepositoryImpl implements UsersRepository {
             statement.setString(2, user.getSurname());
             statement.setString(3, user.getLogin());
             statement.setString(4, user.getPassword());
-            statement.setString(5, user.getNickname());
+            statement.setString(5, user.getPhone());
+            statement.setString(6,user.getEmail());
             int affRows = statement.executeUpdate();
             if (affRows != 1) {
                 throw new RuntimeException("Запись в БД не удалась");
@@ -56,12 +61,6 @@ if(login.equals("")&password.equals("")){return Optional.empty();}
             statement.setString(2, password);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                System.out.println(resultSet.getString("name"));
-                System.out.println(resultSet.getString("surname"));
-                System.out.println(resultSet.getString("login"));
-                System.out.println(resultSet.getString("password"));
-                System.out.println(resultSet.getString("nickname"));
-                System.out.println(resultSet.getLong("id"));
 
                 return  Optional.of(User.builder()
                         .name(resultSet.getString("name"))
@@ -69,7 +68,7 @@ if(login.equals("")&password.equals("")){return Optional.empty();}
                         .login(resultSet.getString("login"))
                         .id(resultSet.getLong("id"))
                         .password(resultSet.getString("password"))
-                        .nickname(resultSet.getString("nickname"))
+                        .phone(resultSet.getString("phone"))
                         .build());
             } else return Optional.empty();
         } catch (SQLException e) {
@@ -79,14 +78,21 @@ if(login.equals("")&password.equals("")){return Optional.empty();}
     }
 
     @Override
-    public Optional<User> findByLogin(String login) {
-        // try (
-        //           Connection connection=dataSource.getConnection();
-        //           PreparedStatement statement= connection.prepareStatement(SELECT);
-        // )
-        {
+    public Optional<Integer> findByLogin(String login) {
+         try (
+                   Connection connection=dataSource.getConnection();
+                   PreparedStatement statement= connection.prepareStatement(SELECT_BY_LOGIN);
 
-        }
+         )
+        {
+            statement.setString(1,login);
+ResultSet rs=statement.executeQuery();
+if(rs.next()){
+   return Optional.of(rs.getInt("id"));
+}
+        } catch (SQLException e) {
+             throw new RuntimeException(e);
+         }
         return Optional.empty();
     }
 
@@ -97,6 +103,30 @@ if(login.equals("")&password.equals("")){return Optional.empty();}
 
     @Override
     public List<User> findAll() {
+        return null;
+    }
+
+    @Override
+    public UserDto findById(int id) {
+        try (
+                Connection connection=dataSource.getConnection();
+                PreparedStatement statement= connection.prepareStatement(SELECT_BY_ID);
+        )
+        {
+            statement.setInt(1,id);
+            ResultSet rs=statement.executeQuery();
+            if(rs.next()){
+               return UserDto.builder().
+                        id(rs.getInt("id")).
+                        name(rs.getString("name")).
+                        surname(rs.getString("surname")).
+                        phone(rs.getString("phone")).
+                       email(rs.getString("email")).
+                        build();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return null;
     }
 }

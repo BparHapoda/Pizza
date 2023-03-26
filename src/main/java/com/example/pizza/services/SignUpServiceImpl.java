@@ -18,7 +18,8 @@ public SignUpServiceImpl(UsersRepository usersRepository){
             .password(form.getPassword())
             .name(form.getName())
             .surname(form.getSurname())
-            .nickname(form.getNickname())
+            .phone(form.getPhone())
+            .email(form.getEmail())
             .build();
     usersRepository.save(user);
     }

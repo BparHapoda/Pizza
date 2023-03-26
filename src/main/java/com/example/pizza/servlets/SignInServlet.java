@@ -1,6 +1,8 @@
 package com.example.pizza.servlets;
 
 import com.example.pizza.dtos.SignInForm;
+import com.example.pizza.models.PizzaNames;
+import com.example.pizza.models.Topping;
 import com.example.pizza.repositories.UserRepositoryImpl;
 import com.example.pizza.repositories.UsersRepository;
 import com.example.pizza.services.SignInService;
@@ -16,6 +18,11 @@ import jakarta.servlet.http.HttpSession;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 
 @WebServlet("/signIn")
 public class SignInServlet extends HttpServlet {
@@ -39,6 +46,20 @@ public class SignInServlet extends HttpServlet {
         if(signInService.login(signInForm)){
 
             req.setAttribute("login",signInForm.getLogin());
+List <String> pizzas=new ArrayList<>();
+for (PizzaNames pizza : PizzaNames.values()){
+    pizzas.add(pizza.getTitle());
+}
+req.setAttribute("pizzas",pizzas);
+
+            List <String> toppings=new ArrayList<>();
+            for (Topping topping : Topping.values()){
+                toppings.add(topping.getTitle());
+            }
+            req.setAttribute("toppings",toppings);
+
+
+
             req.getRequestDispatcher("order.jsp").forward(req,resp);
         }
         else {

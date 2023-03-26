@@ -12,11 +12,20 @@ import java.util.ArrayList;
 @NoArgsConstructor
 @Builder
 public class Order {
-    private Long id;
+    private int id;
+    private Integer customerId;
     private String login;
-    private String pizza;
+    private String item;
+    private String receipt;
 
-    private String adress;
+    private String toppings;
+    private String name;
+    private String surname;
+    private String phone;
+    private String address;
+    private String email;
+
+
 
 
 }

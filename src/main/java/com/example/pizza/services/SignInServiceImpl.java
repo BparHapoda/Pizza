@@ -19,4 +19,15 @@ if (usersRepository.findByLoginAndPassword(form.getLogin(), form.getPassword() )
         }
         return false;
     }
+@Override
+    public Integer getUserIdByLogin (String login){
+        if( usersRepository.findByLogin(login).isPresent())
+        {
+         return  usersRepository.findByLogin(login).get()  ;
+        }
+        else{
+            return null;
+        }
+
+    }
 }

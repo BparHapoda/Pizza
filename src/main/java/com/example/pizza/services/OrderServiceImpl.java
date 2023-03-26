@@ -13,11 +13,22 @@ public class OrderServiceImpl implements OrderService {
 
     public void order(OrderForm orderForm) {
         ordersRepository.save(
-                Order.builder().
-                        login(orderForm.getLogin()).
-                        pizza(orderForm.getPizza()).
-                        adress(orderForm.getAddress())
+                Order.builder()
+                        .customerId(orderForm.getClientId())
+                        .login(orderForm.getLogin())
+                        .item(orderForm.getPizza())
+                        .receipt(orderForm.getReceipt())
+                        .toppings(orderForm.getToppings())
+                        .name(orderForm.getName())
+                        .surname(orderForm.getSurname())
+                        .phone(orderForm.getPhone())
+                        .address(orderForm.getAddress())
+                        .email(orderForm.getEmail())
                         .build()
+
+
         );
     }
 }
+
+

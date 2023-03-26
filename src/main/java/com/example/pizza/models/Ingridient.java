@@ -1,0 +1,7 @@
+package com.example.pizza.models;
+
+public enum Ingridient {
+        FIRST_CHEESE, SECOND_CHEESE, PARMESAN, MOZARELLA, SHRIMPS, ANANAS, ONION,
+        CHEESE, TOMATO, SALAMI, PEPPER, BASIL, OLIVES, MUSHROOMS, PAPRIKA, GARLIC, BACON,DOUGH
+
+}

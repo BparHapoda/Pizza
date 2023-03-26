@@ -7,7 +7,8 @@ import java.sql.*;
 import java.util.Optional;
 
 public class OrderRepositoryImpl implements OrdersRepository {
-    private static String INSERT = "INSERT INTO orders (login,item,address) values (?,?,?)";
+    private static String INSERT = "INSERT INTO orders (item,login,address,customer_id,receipt,toppings,name," +
+            "surname,phone,email) values (?,?,?,?,?,?,?,?,?,?)";
     private DataSource dataSource;
 
     public OrderRepositoryImpl(DataSource dataSource) {
@@ -19,9 +20,20 @@ public class OrderRepositoryImpl implements OrdersRepository {
         try (
                 Connection connection = dataSource.getConnection();
                 PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(1, order.getLogin());
-            statement.setString(2, order.getPizza());
-            statement.setString(3, order.getAdress());
+            statement.setString(1, order.getItem());
+            statement.setString(2, order.getLogin());
+            statement.setString(3, order.getAddress());
+            statement.setInt(4, order.getCustomerId());
+            statement.setString(5, order.getReceipt());
+            statement.setString(6, order.getToppings());
+            statement.setString(7, order.getName());
+            statement.setString(8, order.getSurname());
+            statement.setString(9, order.getPhone());
+            statement.setString(10, order.getEmail());
+
+
+
+
 
             int affRows = statement.executeUpdate();
             if (affRows != 1) {
@@ -29,7 +41,7 @@ public class OrderRepositoryImpl implements OrdersRepository {
             }
             ResultSet resultSet = statement.getGeneratedKeys();
             if (resultSet.next()) {
-                order.setId(resultSet.getLong("id"));
+                order.setId(resultSet.getInt("id"));
             } else {
                 throw new SQLException("Мы не можем получить ID из БД");
             }

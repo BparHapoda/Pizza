@@ -39,7 +39,8 @@ private SignUpService signUpService;
                 .surname(req.getParameter("surname"))
                 .login(req.getParameter("login"))
                 .password(req.getParameter("password"))
-                .nickname(req.getParameter("nickname"))
+                .phone(req.getParameter("phone"))
+                .email(req.getParameter("email"))
                 .build();
         signUpService.signUp(signUpForm);
         resp.sendRedirect("/signIn");

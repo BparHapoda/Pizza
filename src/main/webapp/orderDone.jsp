@@ -10,6 +10,10 @@
 <head>
     <title>Well done</title>
 </head>
+<style>
+    body{  background-color: burlywood;
+    }
+</style>
 <body>
 <h1> Well done , Ваш заказ размещен !</h1>
 </body>
