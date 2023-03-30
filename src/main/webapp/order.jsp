@@ -10,7 +10,12 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=08d4108c-ff62-4810-8e5a-6bca59ef5d40&lang=ru_RU" type="text/javascript"></script>
     <title>Order Page</title>
+
+
+
+
     <script>
         function viewConstruktor() {
             if (document.getElementById('myPizza').checked & document.getElementById('ingridientsForMyPizza').style.display === 'none') {
@@ -100,10 +105,14 @@
     }
 
     .big {
-        width: 600px;
-        height: 50px;
-        font-size: 30px;
-        font-weight: bolder;
+        width: 400px;
+        margin: 20px;
+        height: 25px;
+        border: brown;
+        border: 1px solid gray;
+        color: brown;
+        border-radius: 10px;
+        font-size: 20px;
     }
 
     .ul1 {
@@ -115,10 +124,13 @@
     }
     .map{
         position: absolute;
-top:0px;
+top:50px;
         font-weight: bold;
         font-size: 15px;
         left:500px;
+        width:500px;
+        height:500px;
+        background: black;
     }
 </style>
 <body>
@@ -188,17 +200,126 @@ top:0px;
             <br>
 
             <span class="big" for="address">Введите адрес доставки : </span>
-            <input class="big" type="text" name="address" id="address">
-
+            <br>
+            <input class="big" type="text" name="city" id="city" placeholder="Город">
+            <br>
+            <input class="big" type="text" name="street" id="street" placeholder="Улица">
+            <br>
+            <input class="big" type="text" name="house" id="house" placeholder="Дом">
+            <br>
+            <input class="big" type="text" name="korpus" id="korpus" placeholder="Корпус">
+            <br>
+            <input class="big" type="text" name="flate" id="flate" PLACEHOLDER="Квартира">
+            <br>
 
             <input class="lastButton" style="width: 100px;height: 30px" type="submit">
 
         </form>
 
-        <div class="map">
+        <div id="map" class="map">
             Зона доставки :
-            <script type="text/javascript" charset="utf-8" async src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3Ad9cf06abbc130e72d3fbdf345897b9280c31556e705ada781a818656a1f267f7&amp;width=692&amp;height=632&amp;lang=ru_RU&amp;scroll=true"></script>
+
         </div>
+
+        <script type="text/javascript">
+            ymaps.ready(init);
+            function init (){
+                var map=new ymaps.Map('map',
+                    {center:[60.04309884925572,30.361214369988822],
+                        zoom: 10});
+            }
+            var myGeoObject = new ymaps.GeoObject({
+                // Описываем геометрию геообъекта.
+                geometry: {
+                    // Тип геометрии - "Многоугольник".
+                    type: "Polygon",
+                    // Указываем координаты вершин многоугольника.
+                    coordinates: [
+                        // Координаты вершин внешнего контура.
+                        [
+                            [60.09, 30.36],
+                            [60.06, 30.19],
+                            [60.02, 30.25],
+                            [60.03, 30.43]
+
+                        ],
+                        // Координаты вершин внутреннего контура.
+                        [
+                            [60.09, 30.36],
+                            [60.06, 30.19],
+                            [60.02, 30.25],
+                            [60.03, 30.43]
+                        ]
+                    ],
+                    // Задаем правило заливки внутренних контуров по алгоритму "nonZero".
+                    fillRule: "nonZero"
+                },
+                // Описываем свойства геообъекта.
+                properties:{
+                    // Содержимое балуна.
+                    balloonContent: "Многоугольник"
+                }
+            }, {
+                // Описываем опции геообъекта.
+                // Цвет заливки.
+                fillColor: '#00FF00',
+                // Цвет обводки.
+                strokeColor: '#0000FF',
+                // Общая прозрачность (как для заливки, так и для обводки).
+                opacity: 0.5,
+                // Ширина обводки.
+                strokeWidth: 5,
+                // Стиль обводки.
+                strokeStyle: 'shortdash'
+            });
+
+            // Добавляем многоугольник на карту.
+            map.geoObjects.add(myGeoObject);
+
+
+            var myPolygon = new ymaps.Polygon([
+                // Указываем координаты вершин многоугольника.
+                // Координаты вершин внешнего контура.
+                [
+                    [60.09, 30.36],
+                    [60.06, 30.19],
+                    [60.02, 30.25],
+                    [60.03, 30.43]
+                ],
+                // Координаты вершин внутреннего контура.
+                [
+                    [60.09, 30.36],
+                    [60.06, 30.19],
+                    [60.02, 30.25],
+                    [60.03, 30.43]
+                ]
+            ], {
+                // Описываем свойства геообъекта.
+                // Содержимое балуна.
+                hintContent: "Многоугольник"
+            }, {
+                // Задаем опции геообъекта.
+                // Цвет заливки.
+                fillColor: '#00FF0088',
+                // Ширина обводки.
+                strokeWidth: 5
+            });
+
+            // Добавляем многоугольник на карту.
+            map.geoObjects.add(myPolygon);
+
+
+
+
+
+
+
+
+
+
+
+
+        </script>
     </div>
 </div>
 </body>

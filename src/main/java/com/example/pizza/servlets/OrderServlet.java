@@ -10,6 +10,7 @@ import com.example.pizza.repositories.UserRepositoryImpl;
 import com.example.pizza.repositories.UsersRepository;
 import com.example.pizza.services.*;
 
+import jakarta.mail.MessagingException;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
@@ -30,10 +31,11 @@ import java.util.Optional;
 
 @WebServlet("/order")
 public class OrderServlet extends HttpServlet {
-private ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
     private OrderService orderService;
     private SignInService signInService;
     private UserService userService;
+    private MessageService messageService;
 
 
     @Override
@@ -41,11 +43,13 @@ private ObjectMapper objectMapper;
         ServletContext context = config.getServletContext();
         DataSource dataSource = (DataSource) context.getAttribute("db");
         OrdersRepository orderRepository = new OrderRepositoryImpl(dataSource);
-        UsersRepository usersRepository=new UserRepositoryImpl(dataSource);
+        UsersRepository usersRepository = new UserRepositoryImpl(dataSource);
         this.orderService = new OrderServiceImpl(orderRepository);
-        this.signInService=new SignInServiceImpl(usersRepository);
-        this.userService=new UserServiceImpl(usersRepository);
-this.objectMapper=new ObjectMapper();
+        this.signInService = new SignInServiceImpl(usersRepository);
+        this.userService = new UserServiceImpl(usersRepository);
+        this.objectMapper = new ObjectMapper();
+        this.messageService=new EmailService();
+
     }
 
     @Override
@@ -55,58 +59,83 @@ this.objectMapper=new ObjectMapper();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session=req.getSession();
-        String login= (String) session.getAttribute("login");
-        Integer id=signInService.getUserIdByLogin(login);
-        UserDto userDto=userService.getUserFromRepository(id);
+        HttpSession session = req.getSession();
+        String login = (String) session.getAttribute("login");
+        Integer id = signInService.getUserIdByLogin(login);
+        UserDto userDto = userService.getUserFromRepository(id);
 
 
         Pizza pizza;
-        String pizzaName=req.getParameter("pizza");
-        switch (pizzaName){
-            case "Маргарита" :{pizza= new PizzaMargarita();break;}
-            case "Четыре сыра" :{pizza= new PizzaCaprichosa();break;}
-            case "Капричоза" :{pizza= new PizzaFourCheese();break;}
-            case "Гавайская" :{pizza= new PizzaHawaji();break;}
-            case "myPizza" :{
-                pizza= new PizzaMy();
-                for (Ingridient ingridient: Arrays.asList(Ingridient.values())
-                     ) {
+        String pizzaName = req.getParameter("pizza");
+        switch (pizzaName) {
+            case "Маргарита": {
+                pizza = new PizzaMargarita();
+                break;
+            }
+            case "Четыре сыра": {
+                pizza = new PizzaCaprichosa();
+                break;
+            }
+            case "Капричоза": {
+                pizza = new PizzaFourCheese();
+                break;
+            }
+            case "Гавайская": {
+                pizza = new PizzaHawaji();
+                break;
+            }
+            case "myPizza": {
+                pizza = new PizzaMy();
+                for (Ingridient ingridient : Arrays.asList(Ingridient.values())
+                ) {
 
-if(req.getParameter(ingridient.getTitle())!=null){pizza.getReceipt().add(ingridient);}
+                    if (req.getParameter(ingridient.getTitle()) != null) {
+                        pizza.getReceipt().add(ingridient);
+                    }
                 }
 
 
-                break;}
+                break;
+            }
             default:
                 throw new IllegalStateException("Unexpected value: " + pizzaName);
         }
+        Address address = Address.builder().
+                city(req.getParameter("city"))
+                .street(req.getParameter("street"))
+                .house(req.getParameter("house"))
+                .korpus(req.getParameter("korpus"))
+                .flate(req.getParameter("flate")).
+                build();
 
-
-        OrderForm orderForm =OrderForm.builder()
+        OrderForm orderForm = OrderForm.builder()
                 .clientId(id)
                 .pizza(pizza.getName().getTitle())
                 .login(login)
                 .name(userDto.getName())
                 .surname(userDto.getSurname()).
                 phone(userDto.getPhone()).
-                address(req.getParameter("address"))
+                address(objectMapper.writeValueAsString(address))
                 .email(userDto.getEmail())
                 .build();
 
-        List <String> stringReceipt =new ArrayList<>();
-        for (Ingridient ingridient:pizza.getReceipt()){stringReceipt.add(ingridient.getTitle());}
+        List<String> stringReceipt = new ArrayList<>();
+        for (Ingridient ingridient : pizza.getReceipt()) {
+            stringReceipt.add(ingridient.getTitle());
+        }
         orderForm.setReceipt(objectMapper.writeValueAsString(stringReceipt));
 
-        List <String>toppings =new ArrayList<>();
-        if(req.getParameter("top")!=null){
+        List<String> toppings = new ArrayList<>();
+        if (req.getParameter("top") != null) {
 
-            for (Topping topping: Arrays.asList(Topping.values())
+            for (Topping topping : Arrays.asList(Topping.values())
             ) {
-                if(req.getParameter(topping.getTitle())!=null){toppings.add(topping.getTitle());}
+                if (req.getParameter(topping.getTitle()) != null) {
+                    toppings.add(topping.getTitle());
+                }
             }
 
-            if(toppings.size()>0){
+            if (toppings.size() > 0) {
                 orderForm.setToppings(objectMapper.writeValueAsString(toppings));
             }
 
@@ -114,6 +143,12 @@ if(req.getParameter(ingridient.getTitle())!=null){pizza.getReceipt().add(ingridi
 
 
         orderService.order(orderForm);
+        req.setAttribute("order",orderForm);
+        try {
+            messageService.send(orderForm);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
         req.getRequestDispatcher("orderDone.jsp").forward(req, resp);
     }
 }
